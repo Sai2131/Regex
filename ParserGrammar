@@ -6,7 +6,7 @@ Expr    =>  Expr UNION Expr |
             Expr KLEENE |
             Expr Expr |
             LPAREN Expr RPAREN |
-            CHAR
+            SYMBOL
 
 ---------------------------------- CFG with precedence -----------------------------------
 
@@ -22,7 +22,7 @@ ExprK   =>  ExprK KLEENE |
             Group
 
 Group   =>  LPAREN Expr RPAREN |
-            CHAR
+            SYMBOL
 
 ---------------------------------- CFG with assosiativity --------------------------------
 
@@ -38,7 +38,7 @@ ExprK   =>  ExprK KLEENE |
             Group
 
 Group   =>  LPAREN Expr RPAREN |
-            CHAR
+            SYMBOL
 ---------------------------------- CFG without left recursion ----------------------------
 
 Regex   =>  Expr
@@ -55,4 +55,26 @@ ExprK'  =>  KLEENE ExprK' |
             NONE
 
 Group   =>  LPAREN Expr RPAREN |
-            CHAR
+            SYMBOL
+
+----------------- CFG refractored for disjoint First, Follow Sets ------------------------
+
+Regex   =>  Expr NONE               {LPAREN, SYMBOL}
+
+Expr    =>  ExprC ExprOptional      {LPAREN, SYMBOL}
+
+ExprOptional    =>  UNION Expr |    {UNION}
+                    NONE            {RPAREN, NONE}
+
+ExprC   =>  ExprK ExprCOptional     {LPAREN, SYMBOL}
+
+ExprCOptional   =>  ExprC |         {LPAREN, SYMBOL} 
+                    NONE            {UNION, RPAREN, NONE} 
+
+ExprK   =>  Group ExprK'            {LPAREN, SYMBOL}
+
+ExprK'  =>  KLEENE ExprK' |         {KLEENE}
+            NONE                    {UNION, LPAREN, RPAREN, SYMBOL, NONE}
+
+Group   =>  LPAREN Expr RPAREN |    {LPAREN}
+            SYMBOL                  {SYMBOL}

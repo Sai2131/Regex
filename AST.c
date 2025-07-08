@@ -36,11 +36,34 @@ Node* leafNode(char c){
     return n;
 }
 
-void postOrderPrinter(Node* n){
+void postOrderTraversal(Node* n){
     if(n->left != NULL)
-        postOrderPrinter(n->left);
+        postOrderTraversal(n->left);
     if(n->right != NULL)
-        postOrderPrinter(n->right);
+        postOrderTraversal(n->right);
     
-    printf("sym: %c\n", n->sym);
+    printf("%c", n->sym);
 }
+
+void postOrderPrinter(Node* n){
+    printf("AST (Post Order):");
+    postOrderTraversal(n);
+    printf("\n");
+}
+
+void inOrderTraversal(Node* n){
+    if(n->left != NULL)
+        inOrderTraversal(n->left);
+
+    printf("%c", n->sym);
+
+    if(n->right != NULL)
+        inOrderTraversal(n->right);
+}
+
+void inOrderPrinter(Node* n){
+    printf("AST (In Order):");
+    inOrderTraversal(n);
+    printf("\n");
+}
+

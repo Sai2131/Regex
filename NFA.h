@@ -1,27 +1,21 @@
 #include <stdbool.h>
+#include "Parser.h"
 
-struct State {
-    bool isAccepting;
-    int id;
-};
-typedef struct Node Node;
-
-struct Transitions {
-    char* symbols;
+typedef struct Transition {
+    uint8_t symbols[128];
     bool isEpsilon;
-};
-typedef struct Transitions Transitions;
+} Transition;
 
 //NFA represented an adj matrix
-struct NFA {
-    //Array of states with index == id
-    State* states;
+typedef struct NFA {
+    int numStates;
     
     //2D matrix where NULL means no edge, otherwise the ith row and jth col correspond to the ith state connected to jth state
-    Transitions** TransitionsMatrix;
+    Transition*** TransitionsMatrix;
     int startStateId;
-};
-typedef struct NFA NFA;
+
+    int acceptingStateId; //This is a little different from an NFA as there will only be one accepting state
+} NFA;
 
 //Convert a regular expression to NFA
 NFA* Regex2NFA(char* regex);
@@ -35,3 +29,5 @@ NFA* UnionNFA(NFA* A, NFA* B);
 NFA* ConcatNFA(NFA* A, NFA* B);
 
 NFA* KleeneNFA(NFA* A);
+
+NFA* SymbolNFA(char c);
