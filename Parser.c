@@ -1,19 +1,5 @@
 #include "Parser.h"
 
-/*
-int main(){
-    lexer* l = makeLexer("a|((xyz)*d)*");
-    Node* n = parse_regex(l);
-
-    inOrderPrinter(n);
-    return 0;
-}*/
-
-Node* parse(char* regex){
-    lexer* l = makeLexer(regex);
-    return parse_regex(l);
-}
-
 Node* parse_regex(lexer* l);
 Node* parse_Expr(lexer* l);
 Node* parse_ExprOptional(lexer* l, Node* left);
@@ -22,6 +8,11 @@ Node* parse_ExprCOptional(lexer* l, Node* left);
 Node* parse_ExprK(lexer* l);
 Node* parse_ExprKPrime(lexer* l, Node* left);
 Node* parse_Group(lexer* l);
+
+Node* parse(char* regex){
+    lexer* l = makeLexer(regex);
+    return parse_regex(l);
+}
 
 Node* parse_regex(lexer* l){
     token t;

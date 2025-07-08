@@ -31,3 +31,7 @@ NFA* ConcatNFA(NFA* A, NFA* B);
 NFA* KleeneNFA(NFA* A);
 
 NFA* SymbolNFA(char c);
+
+NFA* AST2NFA(Node* ast);
+
+void printNFA(NFA* n);

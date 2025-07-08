@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra
 
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)
-TARGET = parser
+TARGET = nfa
 
 all: $(TARGET)
 
