@@ -1,0 +1,58 @@
+----------------------------------------- CFG -----------------------------------------
+
+Regex   => Expr
+
+Expr    =>  Expr UNION Expr |
+            Expr KLEENE |
+            Expr Expr |
+            LPAREN Expr RPAREN |
+            CHAR
+
+---------------------------------- CFG with precedence -----------------------------------
+
+Regex   =>  Expr
+
+Expr    =>  Expr UNION Expr |
+            ExprC
+
+ExprC   =>  ExprC ExprC |
+            ExprK
+
+ExprK   =>  ExprK KLEENE |
+            Group
+
+Group   =>  LPAREN Expr RPAREN |
+            CHAR
+
+---------------------------------- CFG with assosiativity --------------------------------
+
+Regex   =>  Expr
+
+Expr    =>  ExprC UNION Expr |
+            ExprC
+
+ExprC   =>  ExprK ExprC |
+            ExprK
+
+ExprK   =>  ExprK KLEENE |
+            Group
+
+Group   =>  LPAREN Expr RPAREN |
+            CHAR
+---------------------------------- CFG without left recursion ----------------------------
+
+Regex   =>  Expr
+
+Expr    =>  ExprC UNION Expr |
+            ExprC
+
+ExprC   =>  ExprK ExprC |
+            ExprK
+
+ExprK   =>  Group ExprK'
+
+ExprK'  =>  KLEENE ExprK' |
+            NONE
+
+Group   =>  LPAREN Expr RPAREN |
+            CHAR
