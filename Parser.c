@@ -1,127 +1,128 @@
 #include "Lexer.h"
+#include "AST.h"
 
-void parse_regex(lexer* l);
-void parse_Expr(lexer* l);
-void parse_ExprOptional(lexer* l);
-void parse_ExprC(lexer* l);
-void parse_ExprCOptional(lexer* l);
-void parse_ExprK(lexer* l);
-void parse_ExprKPrime(lexer* l);
-void parse_Group(lexer* l);
+Node* parse_regex(lexer* l);
+Node* parse_Expr(lexer* l);
+Node* parse_ExprOptional(lexer* l, Node* left);
+Node* parse_ExprC(lexer* l);
+Node* parse_ExprCOptional(lexer* l, Node* left);
+Node* parse_ExprK(lexer* l);
+Node* parse_ExprKPrime(lexer* l, Node* left);
+Node* parse_Group(lexer* l);
 
 int main(){
-    lexer* l = makeLexer("aa|(aa)*vfdaaa");
-    parse_regex(l);
+    lexer* l = makeLexer("ab|(cd)*");
+    Node* n = parse_regex(l);
+
+    postOrderPrinter(n);
     return 0;
 }
 
-void parse_regex(lexer* l){
+Node* parse_regex(lexer* l){
     token t;
     nextToken(l, &t);
 
     if(t.type == LPAREN || t.type == SYMBOL){
-        parse_Expr(l);
+        return parse_Expr(l);
 
         nextToken(l, &t);
         if(t.type == END){
-            return;
+            return NULL;
         }
     }
     
     printf("parse_regex ERROR PARSING\n");
 }
 
-void parse_Expr(lexer* l){
+Node* parse_Expr(lexer* l){
     token t;
     nextToken(l, &t);
 
     if(t.type == LPAREN || t.type == SYMBOL){
-        parse_ExprC(l);
-        parse_ExprOptional(l);
-        return;
+        Node* left = parse_ExprC(l);
+        return parse_ExprOptional(l, left);
     }
 
     printf("parse_Expr ERROR PARSING\n");
 
 }
 
-void parse_ExprOptional(lexer* l){
+Node* parse_ExprOptional(lexer* l, Node* left){
     token t;
     nextToken(l, &t);
 
     if(t.type == UNION){
         eatToken(l, &t);
-        parse_Expr(l);
-        return;
+        Node* right = parse_Expr(l);
+        return unionNode(left, right);
     }
 
     if(t.type == RPAREN || t.type == END){
-        return;
+        return left;
     }
 
     printf("parse_ExprOptional ERROR PARSING\n");
 }
 
-void parse_ExprC(lexer* l){
+Node* parse_ExprC(lexer* l){
     token t;
     nextToken(l, &t);
 
     if(t.type == LPAREN || t.type == SYMBOL){
-        parse_ExprK(l);
-        parse_ExprCOptional(l);
-        return;
+        Node* left = parse_ExprK(l);
+        return parse_ExprCOptional(l, left);
+        
     }
 
     printf("parse_ExprC ERROR PARSING\n %d", t.type);
 }
 
-void parse_ExprCOptional(lexer* l){
+Node* parse_ExprCOptional(lexer* l, Node* left){
     token t;
     nextToken(l, &t);
 
     if(t.type == LPAREN || t.type == SYMBOL){
-        parse_ExprC(l);
-        return;
+        Node* right = parse_ExprC(l);
+        return concatNode(left, right);
     }
 
     if(t.type == UNION || t.type == RPAREN || t.type == END){
-        return;
+        return left;
     }
 
     printf("parse_ExprCOptional ERROR PARSING\n");
 }
 
-void parse_ExprK(lexer* l){
+Node* parse_ExprK(lexer* l){
     token t;
     nextToken(l, &t);
 
     if(t.type == LPAREN || t.type == SYMBOL){
-        parse_Group(l);
-        parse_ExprKPrime(l);
-        return;
+        Node* left = parse_Group(l);
+        return parse_ExprKPrime(l, left);
     }
 
     printf("parse_ExprK ERROR PARSING\n");
 }
 
-void parse_ExprKPrime(lexer* l){
+Node* parse_ExprKPrime(lexer* l, Node* left){
     token t;
     nextToken(l, &t);
 
     if(t.type == KLEENE){
         eatToken(l, &t);
-        parse_ExprKPrime(l);
-        return;
+        parse_ExprKPrime(l, left); //could cause problems
+        return kleeneNode(left);
     }
 
     if(t.type == UNION || t.type == LPAREN || t.type == RPAREN || t.type == SYMBOL || t.type == END){
-        return;
+        return left;
     }
 
     printf("parse_ExprKPrime ERROR PARSING\n");
 }
 
-void parse_Group(lexer* l){
+Node* parse_Group(lexer* l){
     token t;
 
     nextToken(l, &t);
@@ -134,12 +135,12 @@ void parse_Group(lexer* l){
         nextToken(l, &t);
         if(t.type == RPAREN){
             eatToken(l, &t);
-            return;
+            return NULL;
         }
     }
     else if(t.type == SYMBOL){
         eatToken(l, &t);
-        return;
+        return leafNode(t.symbol);
     } 
 
 
