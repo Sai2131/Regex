@@ -11,7 +11,7 @@ Node* parse_ExprKPrime(lexer* l, Node* left);
 Node* parse_Group(lexer* l);
 
 int main(){
-    lexer* l = makeLexer("ab|(cd)*");
+    lexer* l = makeLexer("a|((xyz)*d)*");
     Node* n = parse_regex(l);
 
     postOrderPrinter(n);
@@ -23,11 +23,11 @@ Node* parse_regex(lexer* l){
     nextToken(l, &t);
 
     if(t.type == LPAREN || t.type == SYMBOL){
-        return parse_Expr(l);
+        Node* final = parse_Expr(l);
 
         nextToken(l, &t);
         if(t.type == END){
-            return NULL;
+            return final;
         }
     }
     
@@ -130,12 +130,12 @@ Node* parse_Group(lexer* l){
     if(t.type == LPAREN){
 
         eatToken(l, &t);
-        parse_Expr(l);
+        Node* nest = parse_Expr(l);
         
         nextToken(l, &t);
         if(t.type == RPAREN){
             eatToken(l, &t);
-            return NULL;
+            return nest;
         }
     }
     else if(t.type == SYMBOL){
