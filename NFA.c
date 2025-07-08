@@ -2,7 +2,7 @@
 
 int main(){
 
-    NFA* n = Regex2NFA("ab|c*");
+    NFA* n = Regex2NFA("a|b");
 
     printNFA(n);
 
@@ -72,14 +72,18 @@ NFA* UnionNFA(NFA* A, NFA* B){
     n->TransitionsMatrix[A->acceptingStateId][n->acceptingStateId] = calloc(1, sizeof(Transition));
     n->TransitionsMatrix[A->acceptingStateId][n->acceptingStateId]->isEpsilon = true;
 
-    n->TransitionsMatrix[B->acceptingStateId][n->acceptingStateId] = calloc(1, sizeof(Transition));
-    n->TransitionsMatrix[B->acceptingStateId][n->acceptingStateId]->isEpsilon = true;
+    n->TransitionsMatrix[B->acceptingStateId+offset][n->acceptingStateId] = calloc(1, sizeof(Transition));
+    n->TransitionsMatrix[B->acceptingStateId+offset][n->acceptingStateId]->isEpsilon = true;
+
+    n->TransitionsMatrix[n->startStateId][B->startStateId+offset] = calloc(1, sizeof(Transition));
+    n->TransitionsMatrix[n->startStateId][B->startStateId+offset]->isEpsilon = true;
 
     return n;
 
 }
 
 NFA* ConcatNFA(NFA* A, NFA* B){
+
     NFA* n = malloc(sizeof(NFA));
 
     n->numStates = A->numStates + B->numStates;
@@ -131,7 +135,7 @@ NFA* KleeneNFA(NFA* A){
 }
 
 NFA* SymbolNFA(char c){
-    NFA* n = malloc(sizeof(n));
+    NFA* n = malloc(sizeof(NFA));
 
     n->numStates = 4;
 
