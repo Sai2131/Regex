@@ -1,0 +1,80 @@
+----------------------------------------- CFG -----------------------------------------
+
+Regex   => Expr
+
+Expr    =>  Expr UNION Expr |
+            Expr KLEENE |
+            Expr Expr |
+            LPAREN Expr RPAREN |
+            SYMBOL
+
+---------------------------------- CFG with precedence -----------------------------------
+
+Regex   =>  Expr
+
+Expr    =>  Expr UNION Expr |
+            ExprC
+
+ExprC   =>  ExprC ExprC |
+            ExprK
+
+ExprK   =>  ExprK KLEENE |
+            Group
+
+Group   =>  LPAREN Expr RPAREN |
+            SYMBOL
+
+---------------------------------- CFG with assosiativity --------------------------------
+
+Regex   =>  Expr
+
+Expr    =>  ExprC UNION Expr |
+            ExprC
+
+ExprC   =>  ExprK ExprC |
+            ExprK
+
+ExprK   =>  ExprK KLEENE |
+            Group
+
+Group   =>  LPAREN Expr RPAREN |
+            SYMBOL
+---------------------------------- CFG without left recursion ----------------------------
+
+Regex   =>  Expr
+
+Expr    =>  ExprC UNION Expr |
+            ExprC
+
+ExprC   =>  ExprK ExprC |
+            ExprK
+
+ExprK   =>  Group ExprK'
+
+ExprK'  =>  KLEENE ExprK' |
+            NONE
+
+Group   =>  LPAREN Expr RPAREN |
+            SYMBOL
+
+----------------- CFG refractored for disjoint First, Follow Sets ------------------------
+
+Regex   =>  Expr NONE               {LPAREN, SYMBOL}
+
+Expr    =>  ExprC ExprOptional      {LPAREN, SYMBOL}
+
+ExprOptional    =>  UNION Expr |    {UNION}
+                    NONE            {RPAREN, NONE}
+
+ExprC   =>  ExprK ExprCOptional     {LPAREN, SYMBOL}
+
+ExprCOptional   =>  ExprC |         {LPAREN, SYMBOL} 
+                    NONE            {UNION, RPAREN, NONE} 
+
+ExprK   =>  Group ExprK'            {LPAREN, SYMBOL}
+
+ExprK'  =>  KLEENE ExprK' |         {KLEENE}
+            NONE                    {UNION, LPAREN, RPAREN, SYMBOL, NONE}
+
+Group   =>  LPAREN Expr RPAREN |    {LPAREN}
+            SYMBOL                  {SYMBOL}
