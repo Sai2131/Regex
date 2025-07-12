@@ -2,11 +2,73 @@
 
 int main(){
 
-    NFA* n = Regex2NFA("a|b");
+    NFA* n = Regex2NFA("a|b*");
 
-    printNFA(n);
+    //printNFA(n);
+
+    printf("%d\n", Acceptance(n, "a"));
+    printf("%d\n", Acceptance(n, "b"));
+    printf("%d\n", Acceptance(n, "bbbb"));
+    printf("%d\n", Acceptance(n, "abab"));
+    printf("%d\n", Acceptance(n, "aa"));
+    printf("%d\n", Acceptance(n, "bbbba"));
 
     return 0;
+}
+
+void getEpsilonClosure(NFA*A, uint8_t* closure, int state){
+
+    closure[state] = 1;
+    for(int i = 0; i<A->numStates; i++){
+        if(A->TransitionsMatrix[state][i] != NULL){
+            if(A->TransitionsMatrix[state][i]->isEpsilon){
+                getEpsilonClosure(A, closure, i);
+            }
+        }
+    }
+}
+
+bool Acceptance(NFA* A, char* input){
+    uint8_t currentSet[A->numStates];
+    memset(currentSet, 0, A->numStates);
+
+    getEpsilonClosure(A, currentSet, A->startStateId);
+
+    for(int i = 0; i<strlen(input); i++){
+        char next = input[i];
+
+        uint8_t newCurrentSet[A->numStates];
+        memset(newCurrentSet, 0, A->numStates);
+        uint8_t newReachableStates[A->numStates];
+        memset(newReachableStates, 0, A->numStates);
+
+        for(int j = 0; j<A->numStates; j++){
+            if(currentSet[j]){
+                for(int k = 0; k<A->numStates; k++){
+                    if(A->TransitionsMatrix[j][k] != NULL && A->TransitionsMatrix[j][k]->symbols[next]){
+                        newCurrentSet[k] = 1;
+                        newReachableStates[k] = 1;
+                    }
+                }
+            }
+        }
+        for(int j = 0; j<A->numStates; j++){
+            if(newReachableStates[j]){
+                getEpsilonClosure(A, newCurrentSet, j);
+            }
+        }
+        for(int j = 0; j<A->numStates; j++){
+            currentSet[j] = newCurrentSet[j];
+        }
+
+    }
+
+    if(currentSet[A->acceptingStateId]){
+        return true;
+    }
+
+    return false;
+    
 }
 
 NFA* Regex2NFA(char* regex){
