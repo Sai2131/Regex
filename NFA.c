@@ -1,10 +1,8 @@
 #include "NFA.h"
 
 int main(){
-
+    
     NFA* n = Regex2NFA("a|b*");
-
-    //printNFA(n);
 
     printf("%d\n", Acceptance(n, "a"));
     printf("%d\n", Acceptance(n, "b"));
@@ -12,6 +10,8 @@ int main(){
     printf("%d\n", Acceptance(n, "abab"));
     printf("%d\n", Acceptance(n, "aa"));
     printf("%d\n", Acceptance(n, "bbbba"));
+
+    destoryNFA(&n);
 
     return 0;
 }
@@ -73,21 +73,31 @@ bool Acceptance(NFA* A, char* input){
 
 NFA* Regex2NFA(char* regex){
     Node* ast = parse(regex);
-    return AST2NFA(ast);
+    NFA* n = AST2NFA(ast);
+    
+    return n;
 }
 
 NFA* AST2NFA(Node* ast){
     if(ast->type == CHOICE){
-        return UnionNFA(AST2NFA(ast->left), AST2NFA(ast->right));
+        NFA* tempUnion = UnionNFA(AST2NFA(ast->left), AST2NFA(ast->right));
+        free(ast);
+        return tempUnion;
     }
     if(ast->type == CONCAT){
-        return ConcatNFA(AST2NFA(ast->left), AST2NFA(ast->right));
+        NFA* tempConcat = ConcatNFA(AST2NFA(ast->left), AST2NFA(ast->right));
+        free(ast);
+        return tempConcat;
     }
     if(ast->type == STAR){
-        return KleeneNFA(AST2NFA(ast->left));
+        NFA* tempStar = KleeneNFA(AST2NFA(ast->left));
+        free(ast);
+        return tempStar;
     }
     if(ast->type == LEAF){
-        return SymbolNFA(ast->sym);
+        NFA* tempLeaf = SymbolNFA(ast->sym);
+        free(ast);
+        return tempLeaf;
     }
 
     printf("Error making nfa");
@@ -140,6 +150,9 @@ NFA* UnionNFA(NFA* A, NFA* B){
     n->TransitionsMatrix[n->startStateId][B->startStateId+offset] = calloc(1, sizeof(Transition));
     n->TransitionsMatrix[n->startStateId][B->startStateId+offset]->isEpsilon = true;
 
+    destoryNFA(&A);
+    destoryNFA(&B);
+
     return n;
 
 }
@@ -186,6 +199,8 @@ NFA* ConcatNFA(NFA* A, NFA* B){
     n->TransitionsMatrix[A->acceptingStateId][B->startStateId+offset] = calloc(1, sizeof(Transition));
     n->TransitionsMatrix[A->acceptingStateId][B->startStateId+offset]->isEpsilon = true;
     
+    destoryNFA(&A);
+    destoryNFA(&B);
     return n;
 }
 
@@ -251,4 +266,20 @@ void printNFA(NFA* n){
 
     printf("Start state %d\n", n->startStateId);
     printf("Accepting state %d\n", n->acceptingStateId);
+}
+
+void destoryNFA(NFA** n){
+    NFA* nfa = *n;
+    for(int i = 0; i<nfa->numStates; i++){
+        for(int j = 0; j<nfa->numStates; j++){
+            if(nfa->TransitionsMatrix[i][j] != NULL){
+                free(nfa->TransitionsMatrix[i][j]);
+            }
+        }
+        free(nfa->TransitionsMatrix[i]);
+    }
+    
+    free(nfa->TransitionsMatrix);
+    free(nfa);
+    n = NULL;
 }

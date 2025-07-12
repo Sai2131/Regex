@@ -35,3 +35,5 @@ NFA* SymbolNFA(char c);
 NFA* AST2NFA(Node* ast);
 
 void printNFA(NFA* n);
+
+void destoryNFA(NFA** n);

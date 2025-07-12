@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra 
 
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)

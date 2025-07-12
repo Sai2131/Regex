@@ -10,8 +10,10 @@ Node* parse_ExprKPrime(lexer* l, Node* left);
 Node* parse_Group(lexer* l);
 
 Node* parse(char* regex){
-    lexer* l = makeLexer(regex);
-    return parse_regex(l);
+    lexer* lex = makeLexer(regex);
+    Node* ast = parse_regex(lex);
+    destoryLexer(&lex);
+    return ast;
 }
 
 Node* parse_regex(lexer* l){
