@@ -21,6 +21,16 @@ void eatToken(lexer* l, token *t){
         t->type = UNION;
         return;
     }
+    if(nextChar == '.'){
+        t->type = DOT;
+        return;
+    }
+    if(nextChar == '\\'){
+        nextChar = l->input[l->position];
+        l->position++;
+        t->type = SYMBOL;
+        return;
+    }
     if(nextChar == '*'){
         t->type = KLEENE;
         return;
@@ -48,6 +58,16 @@ void nextToken(lexer* l, token* t){
     t->symbol = nextChar;
     if(nextChar == '|'){
         t->type = UNION;
+        return;
+    }
+    if(nextChar == '.'){
+        t->type = DOT;
+        return;
+    }
+    if(nextChar == '\\'){
+        nextChar = l->input[l->position];
+        l->position++;
+        t->type = SYMBOL;
         return;
     }
     if(nextChar == '*'){

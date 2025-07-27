@@ -27,6 +27,15 @@ Node* concatNode(Node* l, Node* r){
     return n;
 }
 
+Node* leafNodeDot(char c){
+    Node* n = malloc(sizeof(Node));
+    n->sym = c;
+    n->left = NULL;
+    n->right = NULL;
+    n->type = ALL;
+    return n;
+}
+
 Node* leafNode(char c){
     Node* n = malloc(sizeof(Node));
     n->sym = c;

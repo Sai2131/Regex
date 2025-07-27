@@ -9,6 +9,7 @@ enum TOKEN_TYPES {
     LPAREN,
     RPAREN,
     SYMBOL,
+    DOT,
     END
 };
 

@@ -7,7 +7,8 @@ enum NODE_TYPES {
     CHOICE,
     STAR,
     CONCAT,
-    LEAF
+    LEAF,
+    ALL
 };
 
 typedef struct Node {
@@ -24,6 +25,8 @@ Node* kleeneNode(Node* l);
 Node* concatNode(Node* l, Node* r);
 
 Node* leafNode(char c);
+
+Node* leafNodeDot(char c);
 
 void postOrderPrinter(Node* n);
 

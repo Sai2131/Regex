@@ -13,6 +13,17 @@ int main(){
 
     destoryNFA(&n);
 
+    NFA* n1 = Regex2NFA(".*");
+
+    printf("%d\n", Acceptance(n1, "a"));
+    printf("%d\n", Acceptance(n1, "b"));
+    printf("%d\n", Acceptance(n1, "bbbb"));
+    printf("%d\n", Acceptance(n1, "abab"));
+    printf("%d\n", Acceptance(n1, "aa"));
+    printf("%d\n", Acceptance(n1, "bbbba"));
+
+    destoryNFA(&n1);
+
     return 0;
 }
 
@@ -94,8 +105,8 @@ NFA* AST2NFA(Node* ast){
         free(ast);
         return tempStar;
     }
-    if(ast->type == LEAF){
-        NFA* tempLeaf = SymbolNFA(ast->sym);
+    if(ast->type == LEAF || ast->type == ALL){
+        NFA* tempLeaf = SymbolNFA(ast);
         free(ast);
         return tempLeaf;
     }
@@ -211,7 +222,7 @@ NFA* KleeneNFA(NFA* A){
     return A;
 }
 
-NFA* SymbolNFA(char c){
+NFA* SymbolNFA(Node* ast){
     NFA* n = malloc(sizeof(NFA));
 
     n->numStates = 4;
@@ -229,7 +240,12 @@ NFA* SymbolNFA(char c){
 
     n->TransitionsMatrix[1][2] = calloc(1, sizeof(Transition));
     n->TransitionsMatrix[1][2]->isEpsilon = false;
-    n->TransitionsMatrix[1][2]->symbols[(int)c] = 1;
+    if(ast->type == LEAF){
+        n->TransitionsMatrix[1][2]->symbols[(int)ast->sym] = 1;
+    }
+    else{
+        memset(n->TransitionsMatrix[1][2]->symbols, 1, 128);
+    }
 
     n->TransitionsMatrix[2][3] = calloc(1, sizeof(Transition));
     n->TransitionsMatrix[2][3]->isEpsilon = true;

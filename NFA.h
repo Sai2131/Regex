@@ -30,7 +30,7 @@ NFA* ConcatNFA(NFA* A, NFA* B);
 
 NFA* KleeneNFA(NFA* A);
 
-NFA* SymbolNFA(char c);
+NFA* SymbolNFA(Node* ast);
 
 NFA* AST2NFA(Node* ast);
 

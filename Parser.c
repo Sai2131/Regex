@@ -20,7 +20,7 @@ Node* parse_regex(lexer* l){
     token t;
     nextToken(l, &t);
 
-    if(t.type == LPAREN || t.type == SYMBOL){
+    if(t.type == LPAREN || t.type == SYMBOL || t.type == DOT){
         Node* final = parse_Expr(l);
 
         nextToken(l, &t);
@@ -36,7 +36,7 @@ Node* parse_Expr(lexer* l){
     token t;
     nextToken(l, &t);
 
-    if(t.type == LPAREN || t.type == SYMBOL){
+    if(t.type == LPAREN || t.type == SYMBOL || t.type == DOT){
         Node* left = parse_ExprC(l);
         return parse_ExprOptional(l, left);
     }
@@ -66,7 +66,7 @@ Node* parse_ExprC(lexer* l){
     token t;
     nextToken(l, &t);
 
-    if(t.type == LPAREN || t.type == SYMBOL){
+    if(t.type == LPAREN || t.type == SYMBOL || t.type == DOT){
         Node* left = parse_ExprK(l);
         return parse_ExprCOptional(l, left);
         
@@ -79,7 +79,7 @@ Node* parse_ExprCOptional(lexer* l, Node* left){
     token t;
     nextToken(l, &t);
 
-    if(t.type == LPAREN || t.type == SYMBOL){
+    if(t.type == LPAREN || t.type == SYMBOL || t.type == DOT){
         Node* right = parse_ExprC(l);
         return concatNode(left, right);
     }
@@ -95,7 +95,7 @@ Node* parse_ExprK(lexer* l){
     token t;
     nextToken(l, &t);
 
-    if(t.type == LPAREN || t.type == SYMBOL){
+    if(t.type == LPAREN || t.type == SYMBOL || t.type == DOT){
         Node* left = parse_Group(l);
         return parse_ExprKPrime(l, left);
     }
@@ -113,7 +113,7 @@ Node* parse_ExprKPrime(lexer* l, Node* left){
         return kleeneNode(left);
     }
 
-    if(t.type == UNION || t.type == LPAREN || t.type == RPAREN || t.type == SYMBOL || t.type == END){
+    if(t.type == UNION || t.type == LPAREN || t.type == RPAREN || t.type == SYMBOL || t.type == DOT || t.type == END){
         return left;
     }
 
@@ -139,6 +139,10 @@ Node* parse_Group(lexer* l){
     else if(t.type == SYMBOL){
         eatToken(l, &t);
         return leafNode(t.symbol);
+    }
+    else if(t.type == DOT){
+        eatToken(l, &t);
+        return leafNodeDot(t.symbol);
     } 
 
 
