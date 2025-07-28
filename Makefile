@@ -1,17 +1,28 @@
 CC = clang
-CFLAGS = -Wall -Wextra 
+CFLAGS = -Wall -Wextra -fPIC -Iinclude
 
-SRCS = $(wildcard *.c)
-OBJS = $(SRCS:.c=.o)
-TARGET = main
+SRC_DIR = src
+BUILD_DIR = build
+INCLUDE_DIR = include
+LIB_NAME = cRegex
 
-all: $(TARGET)
+SRC = $(wildcard $(SRC_DIR)/*.c)
+OBJ = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRC))
 
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+TARGET_LIB = $(BUILD_DIR)/$(LIB_NAME).so
 
-%.o: %.c
+all: $(TARGET_LIB)
+
+$(TARGET_LIB): $(OBJ)
+	$(CC) -shared -o $@ $^
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -rf $(BUILD_DIR)
+
+.PHONY: all clean
