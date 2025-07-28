@@ -1,8 +1,8 @@
 #include "regex.h"
 
 int main(void){
-    printf("%s\n", matches("a|b*", "bbb"));
 
+    printf("%d\n", quickFullMatch("abc*|(x*)", "abccccc"));
     
     return 0;
 }

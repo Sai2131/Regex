@@ -1,8 +1,8 @@
 #include "regex.h"
 
-
-bool matches(char* reg, char* str){
-    
-    NFA* n = Regex2NFA(reg);
-    return Acceptance(n, str);
+bool quickFullMatch(char* regExpr, char* str){
+    NFA* n = Regex2NFA(regExpr);
+    bool match = Acceptance(n, str);
+    destoryNFA(&n);
+    return match;
 }

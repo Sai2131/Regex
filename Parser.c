@@ -30,6 +30,7 @@ Node* parse_regex(lexer* l){
     }
     
     printf("parse_regex ERROR PARSING\n");
+    return NULL;
 }
 
 Node* parse_Expr(lexer* l){
@@ -42,6 +43,7 @@ Node* parse_Expr(lexer* l){
     }
 
     printf("parse_Expr ERROR PARSING\n");
+    return NULL;
 
 }
 
@@ -60,6 +62,7 @@ Node* parse_ExprOptional(lexer* l, Node* left){
     }
 
     printf("parse_ExprOptional ERROR PARSING\n");
+    return NULL;
 }
 
 Node* parse_ExprC(lexer* l){
@@ -73,6 +76,7 @@ Node* parse_ExprC(lexer* l){
     }
 
     printf("parse_ExprC ERROR PARSING\n %d", t.type);
+    return NULL;
 }
 
 Node* parse_ExprCOptional(lexer* l, Node* left){
@@ -89,6 +93,7 @@ Node* parse_ExprCOptional(lexer* l, Node* left){
     }
 
     printf("parse_ExprCOptional ERROR PARSING\n");
+    return NULL;
 }
 
 Node* parse_ExprK(lexer* l){
@@ -101,6 +106,7 @@ Node* parse_ExprK(lexer* l){
     }
 
     printf("parse_ExprK ERROR PARSING\n");
+    return NULL;
 }
 
 Node* parse_ExprKPrime(lexer* l, Node* left){
@@ -118,6 +124,7 @@ Node* parse_ExprKPrime(lexer* l, Node* left){
     }
 
     printf("parse_ExprKPrime ERROR PARSING\n");
+    return NULL;
 }
 
 Node* parse_Group(lexer* l){
@@ -147,4 +154,5 @@ Node* parse_Group(lexer* l){
 
 
     printf("parse_Group ERROR PARSING\n");
+    return NULL;
 }
