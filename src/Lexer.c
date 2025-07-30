@@ -28,6 +28,7 @@ void eatToken(lexer* l, token *t){
     if(nextChar == '\\'){
         nextChar = l->input[l->position];
         l->position++;
+        t->symbol = nextChar;
         t->type = SYMBOL;
         return;
     }
@@ -65,8 +66,8 @@ void nextToken(lexer* l, token* t){
         return;
     }
     if(nextChar == '\\'){
-        nextChar = l->input[l->position];
-        l->position++;
+        nextChar = l->input[l->position+1];
+        t->symbol = nextChar;
         t->type = SYMBOL;
         return;
     }

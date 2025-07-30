@@ -1,6 +1,7 @@
 #include "../include/cRegex.h"
+#include <stdio.h>
 
 int main(){
-    quickFullMatch("abc*", "abcccc");
+    printf("%d", quickFullMatch(".", "."));
     return 0;
 }
