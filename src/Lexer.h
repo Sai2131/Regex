@@ -1,6 +1,3 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 
 enum TOKEN_TYPES {
@@ -15,7 +12,7 @@ enum TOKEN_TYPES {
 
 typedef struct token {
     char symbol;
-    uint8_t type;
+    int type;
 } token;
 
 typedef struct lexer {
@@ -25,8 +22,10 @@ typedef struct lexer {
 
 lexer* makeLexer(char* regex);
 
-void nextToken(lexer* l, token* t);
+//Look at next token without modification
+int nextToken(lexer* l, token* t);
 
-void eatToken(lexer* l, token* t);
+//Look at and consume next token
+int eatToken(lexer* l, token* t);
 
 void destoryLexer(lexer** l);
