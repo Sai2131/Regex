@@ -5,3 +5,4 @@ int main(){
     printf("%d", quickFullMatch(".", "."));
     return 0;
 }
+

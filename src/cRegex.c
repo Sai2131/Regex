@@ -2,7 +2,7 @@
 #include "NFA.h"
 
 typedef struct regex {
-    bool matched;
+    int matched;
     int numGroups;
     int* groupStart;
     int* groupLen;
@@ -10,8 +10,16 @@ typedef struct regex {
 } regex;
 
 int quickFullMatch(char* regExpr, char* str){
-    NFA* n = Regex2NFA(regExpr);
-    bool match = Acceptance(n, str);
+    Parse p;
+    p.err = 0;
+    p.regex = regExpr;
+
+    NFA* n = Regex2NFA(&p);
+    if(n == NULL){
+        return -1;
+    }
+
+    int match = Acceptance(n, str);
     destoryNFA(&n);
     return match;
 }

@@ -1,4 +1,5 @@
 #include "Parser.h"
+#include <stdio.h>
 
 //Recursive descent parser functions according to grammar
 Node* parse_regex(lexer* l);
@@ -10,13 +11,17 @@ Node* parse_ExprK(lexer* l);
 Node* parse_ExprKPrime(lexer* l, Node* left);
 Node* parse_Group(lexer* l);
 
-Node* parse(char* regex){
-    lexer* lex = makeLexer(regex);
+Node* parse(Parse* p){
+    lexer* lex = makeLexer(p->regex);
     if(lex==NULL){
-        fprintf(stderr, "Creating lexer failed\n");
+        p->err = -1;
         return NULL;
     }
     Node* ast = parse_regex(lex);
+    if(ast == NULL){
+        p->err = -2;
+        return NULL;
+    }
     destoryLexer(&lex);
     return ast;
 }
@@ -32,11 +37,11 @@ Node* parse_regex(lexer* l){
         if(t.type == END){
             return final;
         }
-        fprintf(stderr, "Error parsing regex:\n\t\tNon terminating regex\n");
+        //fprintf(stderr, "Error parsing regex:\n\t\tNon terminating regex\n");
         return NULL;
     }
     
-    fprintf(stderr, "Error parsing regex:\n\t\tNo regex given\n");
+    //fprintf(stderr, "Error parsing regex:\n\t\tNo regex given\n");
     return NULL;
 }
 
@@ -49,7 +54,7 @@ Node* parse_Expr(lexer* l){
         return parse_ExprOptional(l, left);
     }
 
-    fprintf(stderr, "Error parsing regex:\n\t\tExpected (, literal or wildcard at index %d\n", l->position);
+    //fprintf(stderr, "Error parsing regex:\n\t\tExpected (, literal or wildcard at index %d\n", l->position);
     return NULL;
 
 }
@@ -68,7 +73,7 @@ Node* parse_ExprOptional(lexer* l, Node* left){
         return left;
     }
 
-    fprintf(stderr, "Error parsing regex:\n\t\tExpected ), | or END at index %d\n", l->position);
+    //fprintf(stderr, "Error parsing regex:\n\t\tExpected ), | or END at index %d\n", l->position);
     return NULL;
 }
 
@@ -82,7 +87,7 @@ Node* parse_ExprC(lexer* l){
         
     }
 
-    fprintf(stderr, "Error parsing regex:\n\t\tExpected (, literal or wildcard at index %d\n", l->position);
+    //fprintf(stderr, "Error parsing regex:\n\t\tExpected (, literal or wildcard at index %d\n", l->position);
     return NULL;
 }
 
@@ -99,7 +104,7 @@ Node* parse_ExprCOptional(lexer* l, Node* left){
         return left;
     }
 
-    fprintf(stderr, "Error parsing regex:\n\t\tExpected (, literal, wildcard, |, ) or END at index %d\n", l->position);
+    //fprintf(stderr, "Error parsing regex:\n\t\tExpected (, literal, wildcard, |, ) or END at index %d\n", l->position);
     return NULL;
 }
 
@@ -112,7 +117,7 @@ Node* parse_ExprK(lexer* l){
         return parse_ExprKPrime(l, left);
     }
 
-    fprintf(stderr, "Error parsing regex:\n\t\tExpected (, literal or wildcard at index %d\n", l->position);
+    //fprintf(stderr, "Error parsing regex:\n\t\tExpected (, literal or wildcard at index %d\n", l->position);
     return NULL;
 }
 
@@ -130,7 +135,7 @@ Node* parse_ExprKPrime(lexer* l, Node* left){
         return left;
     }
 
-    fprintf(stderr, "Error parsing regex:\n\t\tExpected *, |, (, ), literal, dot or END at index %d\n", l->position);
+    //fprintf(stderr, "Error parsing regex:\n\t\tExpected *, |, (, ), literal, dot or END at index %d\n", l->position);
     return NULL;
 }
 
@@ -150,7 +155,7 @@ Node* parse_Group(lexer* l){
             return nest;
         }
 
-        fprintf(stderr, "Error parsing regex:\n\t\tExpected ) at index %d\n", l->position);
+        //fprintf(stderr, "Error parsing regex:\n\t\tExpected ) at index %d\n", l->position);
         return NULL;
     }
     else if(t.type == SYMBOL){
@@ -162,6 +167,6 @@ Node* parse_Group(lexer* l){
         return leafNodeDot(t.symbol);
     } 
 
-    fprintf(stderr, "Error parsing regex:\n\t\tExpected (, literal or wildcard at index %d\n", l->position);
+    //fprintf(stderr, "Error parsing regex:\n\t\tExpected (, literal or wildcard at index %d\n", l->position);
     return NULL;
 }
