@@ -226,7 +226,26 @@ NFA* SymbolNFA(Node* ast){
     return n;
 }
 
+void destoryNFA(NFA** n){
+    NFA* nfa = *n;
+    for(int i = 0; i<nfa->numStates; i++){
+        for(int j = 0; j<nfa->numStates; j++){
+            if(nfa->TransitionsMatrix[i][j] != NULL){
+                free(nfa->TransitionsMatrix[i][j]);
+            }
+        }
+        free(nfa->TransitionsMatrix[i]);
+    }
+    
+    free(nfa->TransitionsMatrix);
+    free(nfa);
+    n = NULL;
+}
+
 void printNFA(NFA* n){
+    
+    printf("Start state %d\n", n->startStateId);
+    printf("Accepting state %d\n", n->acceptingStateId);
 
     printf("(  )");
     for(int i = 0; i<n->numStates; i++)
@@ -252,23 +271,4 @@ void printNFA(NFA* n){
         }
         printf("\n");
     }
-
-    printf("Start state %d\n", n->startStateId);
-    printf("Accepting state %d\n", n->acceptingStateId);
-}
-
-void destoryNFA(NFA** n){
-    NFA* nfa = *n;
-    for(int i = 0; i<nfa->numStates; i++){
-        for(int j = 0; j<nfa->numStates; j++){
-            if(nfa->TransitionsMatrix[i][j] != NULL){
-                free(nfa->TransitionsMatrix[i][j]);
-            }
-        }
-        free(nfa->TransitionsMatrix[i]);
-    }
-    
-    free(nfa->TransitionsMatrix);
-    free(nfa);
-    n = NULL;
 }

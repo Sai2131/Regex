@@ -12,6 +12,10 @@ Node* parse_Group(lexer* l);
 
 Node* parse(char* regex){
     lexer* lex = makeLexer(regex);
+    if(lex==NULL){
+        fprintf(stderr, "Creating lexer failed\n");
+        return NULL;
+    }
     Node* ast = parse_regex(lex);
     destoryLexer(&lex);
     return ast;

@@ -12,90 +12,93 @@ lexer* makeLexer(char* regex){
     return l;
 }
 
-
-int eatToken(lexer* l, token *t){
+void eatToken(lexer* l, token *t){
     char nextChar = l->input[l->position];
     l->position++;
     t->symbol = nextChar;
     if(nextChar == '|'){
         t->type = UNION;
-        return 1;
+        return;
     }
     if(nextChar == '.'){
         t->type = DOT;
-        return 1;
+        return;
     }
     if(nextChar == '\\'){
         nextChar = l->input[l->position];
         if(nextChar == '\0'){
-            return -1;
+            t->type = ERR;
+            t->symbol = '\0';
+            return;
         }
         l->position++;
         t->symbol = nextChar;
         t->type = SYMBOL;
-        return 1;
+        return;
     }
     if(nextChar == '*'){
         t->type = KLEENE;
-        return 1;
+        return;
     }
     if(nextChar == '('){
         t->type = LPAREN;
-        return 1;
+        return;
     }
     if(nextChar == ')'){
         t->type = RPAREN;
-        return 1;
+        return;
     }
     if(nextChar == '\0'){
         t->type = END;
         l->position--;
-        return 1;
+        return;
     }
 
     t->type = SYMBOL;
-    return 1;
+    return;
 }
 
-int nextToken(lexer* l, token* t){
+void nextToken(lexer* l, token* t){
     char nextChar = l->input[l->position];
     t->symbol = nextChar;
     if(nextChar == '|'){
         t->type = UNION;
-        return 1;
+        return;
     }
     if(nextChar == '.'){
         t->type = DOT;
-        return 1;
+        return;
     }
     if(nextChar == '\\'){
         nextChar = l->input[l->position+1];
         if(nextChar == '\0'){
-            return -1;
+            t->type = ERR;
+            t->symbol = '\0';
+            return;
         }
         t->symbol = nextChar;
         t->type = SYMBOL;
-        return 1;
+        return;
     }
     if(nextChar == '*'){
         t->type = KLEENE;
-        return 1;
+        return;
     }
     if(nextChar == '('){
         t->type = LPAREN;
-        return 1;
+        return;
     }
     if(nextChar == ')'){
         t->type = RPAREN;
-        return 1;
+        return;
     }
     if(nextChar == '\0'){
         t->type = END;
-        return 1;
+        return;
     }
 
     t->type = SYMBOL;
-    return 1;
+    return;
 }
 
 void destoryLexer(lexer** l){

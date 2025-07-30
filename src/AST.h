@@ -1,6 +1,3 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 
 enum NODE_TYPES {
@@ -8,14 +5,14 @@ enum NODE_TYPES {
     STAR,
     CONCAT,
     LEAF,
-    ALL
+    ALL //Dot operator
 };
 
 typedef struct Node {
-    uint8_t type;
+    int type;
     char sym;
     struct Node* left;
-    struct Node* right; //Kleene will only use left, right should always be set to null
+    struct Node* right; //Star is uniary and only uses left, right remains NULL
 } Node;
 
 Node* unionNode(Node* l, Node* r);
@@ -28,6 +25,6 @@ Node* leafNode(char c);
 
 Node* leafNodeDot(char c);
 
+//Extra for debug
 void postOrderPrinter(Node* n);
-
 void inOrderPrinter(Node* n);

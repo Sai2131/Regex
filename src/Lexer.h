@@ -7,7 +7,8 @@ enum TOKEN_TYPES {
     RPAREN,
     SYMBOL,
     DOT,
-    END
+    END,
+    ERR
 };
 
 typedef struct token {
@@ -23,9 +24,9 @@ typedef struct lexer {
 lexer* makeLexer(char* regex);
 
 //Look at next token without modification
-int nextToken(lexer* l, token* t);
+void nextToken(lexer* l, token* t);
 
 //Look at and consume next token
-int eatToken(lexer* l, token* t);
+void eatToken(lexer* l, token* t);
 
 void destoryLexer(lexer** l);

@@ -14,7 +14,7 @@ typedef struct NFA {
     Transition*** TransitionsMatrix;
     int startStateId;
 
-    int acceptingStateId; //This is a little different from an NFA as there will only be one accepting state
+    int acceptingStateId; 
 } NFA;
 
 //Convert a regular expression to NFA
