@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 enum TOKEN_TYPES {
     UNION,
