@@ -24,7 +24,6 @@ Node* concatNode(Node* l, Node* r){
     return n;
 }
 
-
 Node* leafNode(char* c){
     Node* n = malloc(sizeof(Node));
     for(int i = 0; i < 128; i++){

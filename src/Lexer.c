@@ -1,5 +1,4 @@
 #include "Lexer.h"
-#include <stdio.h>
 
 lexer* makeLexer(char* regex){
     lexer* l = malloc(sizeof(lexer));
@@ -16,7 +15,11 @@ lexer* makeLexer(char* regex){
 void eatToken(lexer* l, token *t){
     char nextChar = l->input[l->position];
     l->position++;
+
     memset(t->allowedSymbol, 0, sizeof t->allowedSymbol);
+    t->quantifierMax = t->quantifierMin = -1;
+    t->type = ERR;
+
     if(nextChar == '|'){
         t->type = UNION;
         return;
@@ -93,7 +96,11 @@ void eatToken(lexer* l, token *t){
 
 void nextToken(lexer* l, token* t){
     char nextChar = l->input[l->position];
+
     memset(t->allowedSymbol, 0, sizeof t->allowedSymbol);
+    t->quantifierMax = t->quantifierMin = -1;
+    t->type = ERR;
+
     if(nextChar == '|'){
         t->type = UNION;
         return;

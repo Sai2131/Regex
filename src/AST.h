@@ -22,7 +22,3 @@ Node* kleeneNode(Node* l);
 Node* concatNode(Node* l, Node* r);
 
 Node* leafNode(char* c);
-
-//Extra for debug
-void postOrderPrinter(Node* n);
-void inOrderPrinter(Node* n);

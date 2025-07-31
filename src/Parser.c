@@ -1,5 +1,4 @@
 #include "Parser.h"
-#include <stdio.h>
 
 //Recursive descent parser functions according to grammar
 Node* parse_regex(lexer* l);
