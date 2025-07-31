@@ -12,7 +12,7 @@ void getEpsilonClosure(NFA*A, uint8_t* closure, int state){
     }
 }
 
-bool Acceptance(NFA* A, char* input){
+int Acceptance(NFA* A, char* input){
     uint8_t currentSet[A->numStates];
     memset(currentSet, 0, A->numStates);
 
@@ -48,16 +48,23 @@ bool Acceptance(NFA* A, char* input){
     }
 
     if(currentSet[A->acceptingStateId]){
-        return true;
+        return 1;
     }
 
-    return false;
+    return 0;
     
 }
 
-NFA* Regex2NFA(char* regex){
-    Node* ast = parse(regex);
+NFA* Regex2NFA(Parse* p){
+    Node* ast = parse(p);
+    if(ast == NULL){
+        return NULL;
+    }
     NFA* n = AST2NFA(ast);
+    if(n == NULL){
+        p->err = -3;
+        return NULL;
+    }
     return n;
 }
 
@@ -83,7 +90,6 @@ NFA* AST2NFA(Node* ast){
         return tempLeaf;
     }
 
-    printf("Error making nfa");
     return NULL;
 }
 
@@ -126,13 +132,13 @@ NFA* UnionNFA(NFA* A, NFA* B){
     }
 
     n->TransitionsMatrix[A->acceptingStateId][n->acceptingStateId] = calloc(1, sizeof(Transition));
-    n->TransitionsMatrix[A->acceptingStateId][n->acceptingStateId]->isEpsilon = true;
+    n->TransitionsMatrix[A->acceptingStateId][n->acceptingStateId]->isEpsilon = 1;
 
     n->TransitionsMatrix[B->acceptingStateId+offset][n->acceptingStateId] = calloc(1, sizeof(Transition));
-    n->TransitionsMatrix[B->acceptingStateId+offset][n->acceptingStateId]->isEpsilon = true;
+    n->TransitionsMatrix[B->acceptingStateId+offset][n->acceptingStateId]->isEpsilon = 1;
 
     n->TransitionsMatrix[n->startStateId][B->startStateId+offset] = calloc(1, sizeof(Transition));
-    n->TransitionsMatrix[n->startStateId][B->startStateId+offset]->isEpsilon = true;
+    n->TransitionsMatrix[n->startStateId][B->startStateId+offset]->isEpsilon = 1;
 
     destoryNFA(&A);
     destoryNFA(&B);
@@ -181,7 +187,7 @@ NFA* ConcatNFA(NFA* A, NFA* B){
     }
 
     n->TransitionsMatrix[A->acceptingStateId][B->startStateId+offset] = calloc(1, sizeof(Transition));
-    n->TransitionsMatrix[A->acceptingStateId][B->startStateId+offset]->isEpsilon = true;
+    n->TransitionsMatrix[A->acceptingStateId][B->startStateId+offset]->isEpsilon = 1;
     
     destoryNFA(&A);
     destoryNFA(&B);
@@ -191,7 +197,7 @@ NFA* ConcatNFA(NFA* A, NFA* B){
 NFA* KleeneNFA(NFA* A){
 
     A->TransitionsMatrix[A->acceptingStateId][A->startStateId] = calloc(1, sizeof(Transition));
-    A->TransitionsMatrix[A->acceptingStateId][A->startStateId]->isEpsilon = true;
+    A->TransitionsMatrix[A->acceptingStateId][A->startStateId]->isEpsilon = 1;
     return A;
 }
 
@@ -209,10 +215,10 @@ NFA* SymbolNFA(Node* ast){
     }
 
     n->TransitionsMatrix[0][1] = calloc(1, sizeof(Transition));
-    n->TransitionsMatrix[0][1]->isEpsilon = true;
+    n->TransitionsMatrix[0][1]->isEpsilon = 1;
 
     n->TransitionsMatrix[1][2] = calloc(1, sizeof(Transition));
-    n->TransitionsMatrix[1][2]->isEpsilon = false;
+    n->TransitionsMatrix[1][2]->isEpsilon = 0;
     if(ast->type == LEAF){
         n->TransitionsMatrix[1][2]->symbols[(int)ast->sym] = 1;
     }
@@ -221,12 +227,31 @@ NFA* SymbolNFA(Node* ast){
     }
 
     n->TransitionsMatrix[2][3] = calloc(1, sizeof(Transition));
-    n->TransitionsMatrix[2][3]->isEpsilon = true;
+    n->TransitionsMatrix[2][3]->isEpsilon = 1;
 
     return n;
 }
 
+void destoryNFA(NFA** n){
+    NFA* nfa = *n;
+    for(int i = 0; i<nfa->numStates; i++){
+        for(int j = 0; j<nfa->numStates; j++){
+            if(nfa->TransitionsMatrix[i][j] != NULL){
+                free(nfa->TransitionsMatrix[i][j]);
+            }
+        }
+        free(nfa->TransitionsMatrix[i]);
+    }
+    
+    free(nfa->TransitionsMatrix);
+    free(nfa);
+    n = NULL;
+}
+
 void printNFA(NFA* n){
+    
+    printf("Start state %d\n", n->startStateId);
+    printf("Accepting state %d\n", n->acceptingStateId);
 
     printf("(  )");
     for(int i = 0; i<n->numStates; i++)
@@ -252,23 +277,4 @@ void printNFA(NFA* n){
         }
         printf("\n");
     }
-
-    printf("Start state %d\n", n->startStateId);
-    printf("Accepting state %d\n", n->acceptingStateId);
-}
-
-void destoryNFA(NFA** n){
-    NFA* nfa = *n;
-    for(int i = 0; i<nfa->numStates; i++){
-        for(int j = 0; j<nfa->numStates; j++){
-            if(nfa->TransitionsMatrix[i][j] != NULL){
-                free(nfa->TransitionsMatrix[i][j]);
-            }
-        }
-        free(nfa->TransitionsMatrix[i]);
-    }
-    
-    free(nfa->TransitionsMatrix);
-    free(nfa);
-    n = NULL;
 }

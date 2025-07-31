@@ -1,13 +1,12 @@
 #include "Lexer.h"
-#define MAXLEN 1024
 
 lexer* makeLexer(char* regex){
+    lexer* l = malloc(sizeof(lexer));
 
-    if(strlen(regex) > MAXLEN){
+    if(l == NULL){
         return NULL;
     }
 
-    lexer* l = malloc(sizeof(lexer));
     l->input = regex;
     l->position = 0;
     return l;
@@ -27,6 +26,11 @@ void eatToken(lexer* l, token *t){
     }
     if(nextChar == '\\'){
         nextChar = l->input[l->position];
+        if(nextChar == '\0'){
+            t->type = ERR;
+            t->symbol = '\0';
+            return;
+        }
         l->position++;
         t->symbol = nextChar;
         t->type = SYMBOL;
@@ -67,6 +71,11 @@ void nextToken(lexer* l, token* t){
     }
     if(nextChar == '\\'){
         nextChar = l->input[l->position+1];
+        if(nextChar == '\0'){
+            t->type = ERR;
+            t->symbol = '\0';
+            return;
+        }
         t->symbol = nextChar;
         t->type = SYMBOL;
         return;

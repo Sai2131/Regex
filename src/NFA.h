@@ -1,9 +1,10 @@
-#include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
 #include "Parser.h"
 
 typedef struct Transition {
     uint8_t symbols[128];
-    bool isEpsilon;
+    int isEpsilon;
 } Transition;
 
 //NFA represented an adj matrix
@@ -14,14 +15,14 @@ typedef struct NFA {
     Transition*** TransitionsMatrix;
     int startStateId;
 
-    int acceptingStateId; //This is a little different from an NFA as there will only be one accepting state
+    int acceptingStateId; 
 } NFA;
 
 //Convert a regular expression to NFA
-NFA* Regex2NFA(char* regex);
+NFA* Regex2NFA(Parse* p);
 
 //Check if NFA accepts a string
-bool Acceptance(NFA* A, char* input);
+int Acceptance(NFA* A, char* input);
 
 //Helpers to convert regex to NFA
 NFA* UnionNFA(NFA* A, NFA* B);
