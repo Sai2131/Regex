@@ -5,13 +5,12 @@ enum NODE_TYPES {
     CHOICE,
     STAR,
     CONCAT,
-    LEAF,
-    ALL //Dot operator
+    LEAF
 };
 
 typedef struct Node {
     int type;
-    char sym;
+    char allowedSymbol[128];
     struct Node* left;
     struct Node* right; //Star is uniary and only uses left, right remains NULL
 } Node;
@@ -22,9 +21,7 @@ Node* kleeneNode(Node* l);
 
 Node* concatNode(Node* l, Node* r);
 
-Node* leafNode(char c);
-
-Node* leafNodeDot(char c);
+Node* leafNode(char* c);
 
 //Extra for debug
 void postOrderPrinter(Node* n);

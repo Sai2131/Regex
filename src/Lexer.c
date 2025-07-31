@@ -15,29 +15,33 @@ lexer* makeLexer(char* regex){
 void eatToken(lexer* l, token *t){
     char nextChar = l->input[l->position];
     l->position++;
-    t->symbol = nextChar;
     if(nextChar == '|'){
         t->type = UNION;
         return;
     }
     if(nextChar == '.'){
-        t->type = DOT;
+        for(int i = 0; i<128; i++){
+            t->allowedSymbol[i] = 1;
+        }
+        t->type = SYMBOL;
         return;
     }
     if(nextChar == '\\'){
         nextChar = l->input[l->position];
         if(nextChar == '\0'){
             t->type = ERR;
-            t->symbol = '\0';
+            t->allowedSymbol['\0'] = 1;
             return;
         }
         l->position++;
-        t->symbol = nextChar;
+        t->allowedSymbol[(int)nextChar] = 1;
         t->type = SYMBOL;
         return;
     }
     if(nextChar == '*'){
         t->type = KLEENE;
+        t->quantifierMax = INT32_MAX;
+        t->quantifierMin = 0;
         return;
     }
     if(nextChar == '('){
@@ -55,33 +59,38 @@ void eatToken(lexer* l, token *t){
     }
 
     t->type = SYMBOL;
+    t->allowedSymbol[(int)nextChar] = 1;
     return;
 }
 
 void nextToken(lexer* l, token* t){
     char nextChar = l->input[l->position];
-    t->symbol = nextChar;
     if(nextChar == '|'){
         t->type = UNION;
         return;
     }
     if(nextChar == '.'){
-        t->type = DOT;
+        for(int i = 0; i<128; i++){
+            t->allowedSymbol[i] = 1;
+        }
+        t->type = SYMBOL;
         return;
     }
     if(nextChar == '\\'){
         nextChar = l->input[l->position+1];
         if(nextChar == '\0'){
             t->type = ERR;
-            t->symbol = '\0';
+            t->allowedSymbol['\0'] = 1;
             return;
         }
-        t->symbol = nextChar;
+        t->allowedSymbol[(int)nextChar] = 1;
         t->type = SYMBOL;
         return;
     }
     if(nextChar == '*'){
         t->type = KLEENE;
+        t->quantifierMax = INT32_MAX;
+        t->quantifierMin = 0;
         return;
     }
     if(nextChar == '('){
@@ -98,6 +107,7 @@ void nextToken(lexer* l, token* t){
     }
 
     t->type = SYMBOL;
+    t->allowedSymbol[(int)nextChar] = 1;
     return;
 }
 

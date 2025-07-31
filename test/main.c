@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
-static int _passed;
-static int _total;
+static int _passed = 0;
+static int _total = 0;
 
 #define TEST(A, B) do{\
                         _total++; \
