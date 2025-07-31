@@ -44,7 +44,8 @@ void basicFullMatchTests(){
 
     TEST(quickFullMatch("abc", "abc"), 1);
     TEST(quickFullMatch("abc*", "abcc"), 1);
-    TEST(quickFullMatch("abc*", "ab"), 1);
+    TEST(quickFullMatch("ab*", "a"), 1);
+    TEST(quickFullMatch("a*", ""), 1);
     TEST(quickFullMatch("a|b", "ab"), 0);
 }
 

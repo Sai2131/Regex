@@ -1,11 +1,10 @@
 #include "NFA.h"
 
 void getEpsilonClosure(NFA*A, uint8_t* closure, int state){
-
     closure[state] = 1;
     for(int i = 0; i<A->numStates; i++){
         if(A->TransitionsMatrix[state][i] != NULL){
-            if(A->TransitionsMatrix[state][i]->isEpsilon){
+            if(A->TransitionsMatrix[state][i]->isEpsilon && closure[i] != 1){
                 getEpsilonClosure(A, closure, i);
             }
         }
@@ -15,7 +14,7 @@ void getEpsilonClosure(NFA*A, uint8_t* closure, int state){
 int Acceptance(NFA* A, char* input){
     uint8_t currentSet[A->numStates];
     memset(currentSet, 0, A->numStates);
-
+    
     getEpsilonClosure(A, currentSet, A->startStateId);
 
     for(size_t i = 0; i<strlen(input); i++){
@@ -198,6 +197,10 @@ NFA* KleeneNFA(NFA* A){
 
     A->TransitionsMatrix[A->acceptingStateId][A->startStateId] = calloc(1, sizeof(Transition));
     A->TransitionsMatrix[A->acceptingStateId][A->startStateId]->isEpsilon = 1;
+
+    A->TransitionsMatrix[A->startStateId][A->acceptingStateId] = calloc(1, sizeof(Transition));
+    A->TransitionsMatrix[A->startStateId][A->acceptingStateId]->isEpsilon = 1;
+    
     return A;
 }
 
