@@ -3,11 +3,10 @@
 #include "Parser.h"
 
 typedef struct Transition {
-    uint8_t symbols[128];
+    int symbols[128];
     int isEpsilon;
 } Transition;
 
-//NFA represented an adj matrix
 typedef struct NFA {
     int numStates;
     
@@ -35,6 +34,6 @@ NFA* SymbolNFA(Node* ast);
 
 NFA* AST2NFA(Node* ast);
 
-void printNFA(NFA* n);
-
 void destoryNFA(NFA** n);
+
+void printNFA(NFA* n);

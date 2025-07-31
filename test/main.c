@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
-static int _passed;
-static int _total;
+static int _passed = 0;
+static int _total = 0;
 
 #define TEST(A, B) do{\
                         _total++; \
@@ -39,18 +39,49 @@ int main(int argc, char *argv[]){
     return -1;
 }
 
+void edgeCases(){
+
+    TEST(quickFullMatch(".*", ""), 1);
+    TEST(quickFullMatch("[ABC-Z]*", ""), 1);
+
+    TEST(quickFullMatch("HELLO", ""), 0);
+    TEST(quickFullMatch(".", ""), 0);
+}
 
 void basicFullMatchTests(){
-
+    
     TEST(quickFullMatch("abc", "abc"), 1);
     TEST(quickFullMatch("abc*", "abcc"), 1);
     TEST(quickFullMatch("ab*", "a"), 1);
     TEST(quickFullMatch("a*", ""), 1);
     TEST(quickFullMatch("a|b", "ab"), 0);
+    TEST(quickFullMatch("xyz|b", "xyz"), 1);
+    TEST(quickFullMatch("xy*z|by*", "xyyz"), 1);
+}
+
+void advancedFullMatchTests(){
+
+    TEST(quickFullMatch("(abc)*", "abcabcabc"), 1);
+    TEST(quickFullMatch("(a|b|c*)*|z", "aaaabbbccca"), 1);
+    TEST(quickFullMatch("((xyz)*abc)", "abc"), 1);
+    TEST(quickFullMatch("...-...-.*", "123-456-"), 1);
+    TEST(quickFullMatch("..*@..*\\.com", "pleasework@email.com"), 1);
+    TEST(quickFullMatch("\\([0-9][0-9][0-9]\\)-[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]", "(111)-222-2222"), 1);
+    TEST(quickFullMatch("([A-Za-z0-9][A-Za-z0-9]*)@[A-Za-z0-9][A-Za-z0-9]*\\.[A-Za-z0-9][A-Za-z0-9]*", "Hello123@hello.hello"), 1);
+
+    TEST(quickFullMatch("(abc)*", "abcabcab"), 0);
+    TEST(quickFullMatch("(a|b|c*)*|z", "zaaaabbbccca"), 0);
+    TEST(quickFullMatch("((xyz)*abc)", "xyzabcc"), 0);
+    TEST(quickFullMatch("...-...-.*", "123456-"), 0);
+    TEST(quickFullMatch("..*@..*\\.com", "pleasedontwork@.com"), 0);
+    TEST(quickFullMatch("\\([0-9][0-9][0-9]\\)-[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]", "111-222-2222"), 0);
+    TEST(quickFullMatch("([A-Za-z0-9][A-Za-z0-9]*)@[A-Za-z0-9][A-Za-z0-9]*\\.[A-Za-z0-9][A-Za-z0-9]*", "HELLO!@&&&.#"), 0);
 }
 
 void automaticTesting(){
+    edgeCases();
     basicFullMatchTests();
+    advancedFullMatchTests();
     printf("Passed: %d out of %d\n", _passed, _total);
 }
 

@@ -1,19 +1,22 @@
 #include <stdlib.h>
+#include <string.h>
 
 enum TOKEN_TYPES {
     UNION,
     KLEENE,
+    QUANTIFIER,
     LPAREN,
     RPAREN,
     SYMBOL,
-    DOT,
     END,
     ERR
 };
 
 typedef struct token {
-    char symbol;
+    char allowedSymbol[128];
     int type;
+    int quantifierMin;
+    int quantifierMax;
 } token;
 
 typedef struct lexer {

@@ -59,23 +59,22 @@ Group   =>  LPAREN Expr RPAREN |
 
 ----------------- CFG refractored for disjoint First, Follow Sets ------------------------
 
-Regex   =>  Expr NONE               {LPAREN, SYMBOL, DOT}
+Regex   =>  Expr NONE               {LPAREN, SYMBOL}
 
-Expr    =>  ExprC ExprOptional      {LPAREN, SYMBOL, DOT}
+Expr    =>  ExprC ExprOptional      {LPAREN, SYMBOL}
 
 ExprOptional    =>  UNION Expr |    {UNION}
                     NONE            {RPAREN, NONE}
 
-ExprC   =>  ExprK ExprCOptional     {LPAREN, SYMBOL, DOT}
+ExprC   =>  ExprK ExprCOptional     {LPAREN, SYMBOL}
 
-ExprCOptional   =>  ExprC |         {LPAREN, SYMBOL, DOT} 
+ExprCOptional   =>  ExprC |         {LPAREN, SYMBOL} 
                     NONE            {UNION, RPAREN, NONE} 
 
-ExprK   =>  Group ExprK'            {LPAREN, SYMBOL, DOT}
+ExprK   =>  Group ExprK'            {LPAREN, SYMBOL}
 
 ExprK'  =>  KLEENE ExprK' |         {KLEENE}
-            NONE                    {UNION, LPAREN, RPAREN, SYMBOL, NONE, DOT}
+            NONE                    {UNION, LPAREN, RPAREN, SYMBOL, NONE}
 
 Group   =>  LPAREN Expr RPAREN |    {LPAREN}
-            SYMBOL             |    {SYMBOL}
-            DOT                     {DOT}
+            SYMBOL                  {SYMBOL}

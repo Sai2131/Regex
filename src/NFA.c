@@ -83,7 +83,7 @@ NFA* AST2NFA(Node* ast){
         free(ast);
         return tempStar;
     }
-    if(ast->type == LEAF || ast->type == ALL){
+    if(ast->type == LEAF){
         NFA* tempLeaf = SymbolNFA(ast);
         free(ast);
         return tempLeaf;
@@ -223,7 +223,9 @@ NFA* SymbolNFA(Node* ast){
     n->TransitionsMatrix[1][2] = calloc(1, sizeof(Transition));
     n->TransitionsMatrix[1][2]->isEpsilon = 0;
     if(ast->type == LEAF){
-        n->TransitionsMatrix[1][2]->symbols[(int)ast->sym] = 1;
+        for(int j = 0; j<128; j++){
+            n->TransitionsMatrix[1][2]->symbols[j] = ast->allowedSymbol[j];
+        }
     }
     else{
         memset(n->TransitionsMatrix[1][2]->symbols, 1, 128);
