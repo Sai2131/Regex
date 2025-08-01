@@ -59,6 +59,17 @@ void basicFullMatchTests(){
     TEST(quickFullMatch("xy*z|by*", "xyyz"), 1);
 }
 
+void basicFirstMatchTests(){
+    TEST(quickFirstMatch("abc", "helloabchello"), 1);
+    TEST(quickFirstMatch("@email.email", "hello@email.email"), 1);
+    TEST(quickFirstMatch("6\\.534", "89759346.5345f4fg"), 1);
+
+    TEST(quickFirstMatch("abc", "hello"), 0);
+    TEST(quickFirstMatch("abc", "helloachello"), 0);
+    TEST(quickFirstMatch("@email.email", "hello@email.com"), 0);
+    TEST(quickFirstMatch("6\\.534", "8975934645f4fg"), 0);
+}
+
 void advancedFullMatchTests(){
 
     TEST(quickFullMatch("(abc)*", "abcabcabc"), 1);
@@ -82,6 +93,8 @@ void automaticTesting(){
     edgeCases();
     basicFullMatchTests();
     advancedFullMatchTests();
+
+    basicFirstMatchTests();
     printf("Passed: %d out of %d\n", _passed, _total);
 }
 
